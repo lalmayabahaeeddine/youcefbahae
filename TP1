@@ -1,0 +1,48 @@
+% Predicate to create a task
+add_task(TaskID, Description, Assignee) :-
+    assert(task(TaskID, Description, Assignee, false)).
+
+% Predicate to assign a task to a user
+assign_task(TaskID, User) :-
+    retract(task(TaskID, Description, _, Status)),
+    assert(task(TaskID, Description, User, Status)).
+
+% Predicate to mark a task as completed
+mark_completed(TaskID) :-
+    retract(task(TaskID, Description, Assignee, _)),
+    assert(task(TaskID, Description, Assignee, true)).
+
+% Predicate to display all task
+show_all_tasks :-
+    forall(task(TaskID, TaskTitle, Details, AssignedTo, Status),
+           (write('Task '), write(TaskID), write(': - Title: '),
+            write(TaskTitle), write(' - Details: '), write(Details),
+            write(' - Assigned to: '), write(AssignedTo),
+            write(' - Status: '), writeln(Status))).
+
+% Predicate to add a new task
+add_new_task(TaskID, TaskTitle, Details, AssignedTo) :-
+    assertz(task(TaskID, TaskTitle, Details, AssignedTo, false)).
+
+% Predicate to delegate a task to a user
+delegate_task(TaskID, NewUser) :-
+    retract(task(TaskID, TaskTitle, Details, _, Status)),
+    assertz(task(TaskID, TaskTitle, Details, NewUser, Status)).
+
+% Predicate to finish a task
+finish_task(TaskID) :-
+    retract(task(TaskID, TaskTitle, Details, AssignedTo, _)),
+    assertz(task(TaskID, TaskTitle, Details, AssignedTo, true)).
+
+% Predicate to show all tasks
+show_all_tasks :-
+    forall(task(TaskID, TaskTitle, Details, AssignedTo, Status),
+           (write('Task '), write(TaskID), write(': - Title: '),
+            write(TaskTitle), write(' - Details: '), write(Details),
+            write(' - Assigned to: '), write(AssignedTo),
+            write(' - Status: '), writeln(Status))).
+
+% Predicate to show tasks for a specific user
+show_tasks_for(User) :-
+    forall(task(TaskID, TaskTitle, Details, User, Status),
+           (write('Task '), write(TaskID), write(': - Title: '),
