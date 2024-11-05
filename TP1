@@ -1,48 +1,43 @@
-% Predicate to create a task
-add_task(TaskID, Description, Assignee) :-
-    assert(task(TaskID, Description, Assignee, false)).
+:- dynamic task/4.
 
-% Predicate to assign a task to a user
-assign_task(TaskID, User) :-
-    retract(task(TaskID, Description, _, Status)),
-    assert(task(TaskID, Description, User, Status)).
+create_task(I, D, U) :-
+    assert(task(I, D, U, "false")).
 
-% Predicate to mark a task as completed
+assign_task(TaskID, NewUser) :-
+    retract(task(TaskID, D, _, S)),
+    assert(task(TaskID, D, NewUser, S)).
+
 mark_completed(TaskID) :-
-    retract(task(TaskID, Description, Assignee, _)),
-    assert(task(TaskID, Description, Assignee, true)).
+    retract(task(TaskID, D, U, _)),
+    assert(task(TaskID, D, U, "true")).
 
-% Predicate to display all task
-show_all_tasks :-
-    forall(task(TaskID, TaskTitle, Details, AssignedTo, Status),
-           (write('Task '), write(TaskID), write(': - Title: '),
-            write(TaskTitle), write(' - Details: '), write(Details),
-            write(' - Assigned to: '), write(AssignedTo),
-            write(' - Status: '), writeln(Status))).
+display_task(TaskID, Description, User, Status) :-
+    format("Task ~w:", [TaskID]), nl,
+    format("Description: ~w", [Description]), nl,
+    format("assigned to: ~w", [User]), nl,
+    format("Complete status: ~w", [Status]), nl.
 
-% Predicate to add a new task
-add_new_task(TaskID, TaskTitle, Details, AssignedTo) :-
-    assertz(task(TaskID, TaskTitle, Details, AssignedTo, false)).
+display_tasks :-
+    task(TaskID, Description, User, Status),
+    display_task(TaskID, Description, User, Status),
+    fail.
+display_tasks.
 
-% Predicate to delegate a task to a user
-delegate_task(TaskID, NewUser) :-
-    retract(task(TaskID, TaskTitle, Details, _, Status)),
-    assertz(task(TaskID, TaskTitle, Details, NewUser, Status)).
+display_tasks_assign_to(User) :-
+    task(TaskID, Description, User, Status),
+    format("Task ~w:", [TaskID]), nl,
+    format("Description: ~w", [Description]), nl,
+    format("assigned to: ~w", [User]), nl,
+    format("Complete status: ~w", [Status]), nl,
+    fail.
+   display_tasks_assign_to(_).
 
-% Predicate to finish a task
-finish_task(TaskID) :-
-    retract(task(TaskID, TaskTitle, Details, AssignedTo, _)),
-    assertz(task(TaskID, TaskTitle, Details, AssignedTo, true)).
+display_completed_tasks:-
 
-% Predicate to show all tasks
-show_all_tasks :-
-    forall(task(TaskID, TaskTitle, Details, AssignedTo, Status),
-           (write('Task '), write(TaskID), write(': - Title: '),
-            write(TaskTitle), write(' - Details: '), write(Details),
-            write(' - Assigned to: '), write(AssignedTo),
-            write(' - Status: '), writeln(Status))).
-
-% Predicate to show tasks for a specific user
-show_tasks_for(User) :-
-    forall(task(TaskID, TaskTitle, Details, User, Status),
-           (write('Task '), write(TaskID), write(': - Title: '),
+    task(TaskID, Description, User, "true"),
+    format("Task ~w:", [TaskID]), nl,
+    format("Description: ~w", [Description]), nl,
+    format("assigne to: ~w", [User]), nl,
+    format("Complete status: ~w", [true]), nl,
+    fail.
+  display_completed_tasks.
