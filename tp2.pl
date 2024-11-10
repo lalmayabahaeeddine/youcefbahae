@@ -59,8 +59,12 @@ even([_|T]):-
 concat([],L,L).
 concat([R|T],L,[R|H]):-
     concat(T,L,H).
-/*
-palindrom([]).
-palindrom([_]).
-palindrom()
-*/
+
+%exo09
+
+palindrome([]).
+palindrome([_]).
+
+palindrome(L) :-
+    append([F|R], [F], L),
+    palindrome(R).
