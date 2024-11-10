@@ -38,20 +38,17 @@ del_k(X,[R|T],L,[R|H]):-
 
 %exo06
 
-list_length([],0).
-list_length([_|T],N):-
+list_length(L, N) :-
+    findall(_, member(_, L), Elements), 
+    length(Elements, N).                 
+% exo07
+even(L) :-
+    list_length(L, N),               
+    0 is N mod 2.                   
 
-    list_length(T,N1),
-    N is N1 +1.
-%exo07
-
-
-odd([_]).
-odd([_|T]):-
-    even(T).
-even([]).
-even([_|T]):-
-    odd(T).
+odd(L) :-
+    list_length(L, N),               
+    1 is N mod 2.                    
 
 %exo08
 
